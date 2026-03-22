@@ -38,7 +38,7 @@ export default async function AdminPage() {
   return (
     <AppShell
       title="Admin Dashboard"
-      subtitle={`Welcome, ${profile.full_name || profile.email}`}
+      subtitle={`Welcome, ${profile.full_name || profile.email || "Admin"}`}
       activeHref="/admin"
       navItems={[
         { href: "/admin", label: "Dashboard" },
@@ -51,10 +51,30 @@ export default async function AdminPage() {
       rightSlot={<LogoutButton />}
     >
       <section className="stats-grid compact-top">
-        <StatCard label="Total Books" value={totalBooks || 0} note="All titles in catalog" icon={BookOpen} />
-        <StatCard label="Students" value={totalStudents || 0} note="Registered student accounts" icon={Users} />
-        <StatCard label="Active Borrows" value={activeBorrows || 0} note="Currently issued books" icon={RotateCcw} />
-        <StatCard label="Overdue Books" value={overdueBooks || 0} note="Need attention" icon={AlertTriangle} />
+        <StatCard
+          label="Total Books"
+          value={totalBooks || 0}
+          note="All titles in catalog"
+          icon={BookOpen}
+        />
+        <StatCard
+          label="Students"
+          value={totalStudents || 0}
+          note="Registered student accounts"
+          icon={Users}
+        />
+        <StatCard
+          label="Active Borrows"
+          value={activeBorrows || 0}
+          note="Currently issued books"
+          icon={RotateCcw}
+        />
+        <StatCard
+          label="Overdue Books"
+          value={overdueBooks || 0}
+          note="Need attention"
+          icon={AlertTriangle}
+        />
       </section>
 
       <section className="dashboard-grid-balanced">
@@ -99,15 +119,17 @@ export default async function AdminPage() {
               {(profile.full_name || profile.email || "A").charAt(0).toUpperCase()}
             </div>
             <div>
-              <div className="profile-summary-name">{profile.full_name || "Admin User"}</div>
-              <div className="profile-summary-email">{profile.email}</div>
+              <div className="profile-summary-name">
+                {profile.full_name || "Admin User"}
+              </div>
+              <div className="profile-summary-email">{profile.email || "-"}</div>
             </div>
           </div>
 
           <div className="info-grid">
             <div className="info-item">
               <strong>Role</strong>
-              <span>{profile.role}</span>
+              <span>{profile.role || "-"}</span>
             </div>
             <div className="info-item">
               <strong>Status</strong>

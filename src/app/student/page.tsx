@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AlertTriangle, BookOpen, CreditCard, RotateCcw } from "lucide-react";
 import AppShell from "@/components/layout/AppShell";
 import LogoutButton from "@/components/layout/LogoutButton";
@@ -49,7 +48,7 @@ export default async function StudentPage() {
   return (
     <AppShell
       title="Student Dashboard"
-      subtitle={`Welcome, ${profile.full_name || profile.email}`}
+      subtitle={`Welcome, ${profile.full_name || profile.email || "Student"}`}
       activeHref="/student"
       navItems={[
         { href: "/student", label: "Dashboard" },
@@ -59,36 +58,40 @@ export default async function StudentPage() {
         { href: "/student/profile", label: "Profile" },
       ]}
       rightSlot={<LogoutButton />}
-      sidebarActions={
-        <>
-          <Link href="/student/books" className="btn btn-primary sidebar-action-btn">
-            Browse Books
-          </Link>
-          <Link href="/student/borrows" className="btn btn-secondary sidebar-action-btn">
-            Current Borrows
-          </Link>
-          <Link href="/student/history" className="btn btn-secondary sidebar-action-btn">
-            History
-          </Link>
-          <Link href="/student/profile" className="btn btn-secondary sidebar-action-btn">
-            Profile
-          </Link>
-        </>
-      }
     >
       <section className="stats-grid compact-top">
-        <StatCard label="Borrowed Now" value={borrowedNow || 0} note="Books currently with you" icon={BookOpen} />
-        <StatCard label="Returned" value={returnedCount || 0} note="Books returned so far" icon={RotateCcw} />
-        <StatCard label="Overdue" value={overdueCount || 0} note="Books needing return" icon={AlertTriangle} />
-        <StatCard label="Total Fine" value={`₹${totalFine.toFixed(2)}`} note="Outstanding fine" icon={CreditCard} />
+        <StatCard
+          label="Borrowed Now"
+          value={borrowedNow || 0}
+          note="Books currently with you"
+          icon={BookOpen}
+        />
+        <StatCard
+          label="Returned"
+          value={returnedCount || 0}
+          note="Books returned so far"
+          icon={RotateCcw}
+        />
+        <StatCard
+          label="Overdue"
+          value={overdueCount || 0}
+          note="Books needing return"
+          icon={AlertTriangle}
+        />
+        <StatCard
+          label="Total Fine"
+          value={`₹${totalFine.toFixed(2)}`}
+          note="Outstanding fine"
+          icon={CreditCard}
+        />
       </section>
 
-      <section className="grid-2">
+      <section className="dashboard-grid-balanced">
         <div className="glass-card card-pad clean-panel">
           <div className="section-head">
             <div>
               <h2 className="section-title">Library Overview</h2>
-              <p className="section-subtitle">A cleaner summary of your current student account.</p>
+              <p className="section-subtitle">Your account and borrowing summary.</p>
             </div>
           </div>
 
@@ -103,7 +106,7 @@ export default async function StudentPage() {
             </div>
             <div className="info-item">
               <strong>Borrow Limit</strong>
-              <span>{profile.max_borrow_limit}</span>
+              <span>{profile.max_borrow_limit ?? 3}</span>
             </div>
             <div className="info-item">
               <strong>Outstanding Fine</strong>
@@ -115,23 +118,27 @@ export default async function StudentPage() {
         <div className="glass-card card-pad clean-panel">
           <div className="section-head">
             <div>
-              <h2 className="section-title">Account Status</h2>
-              <p className="section-subtitle">Quick summary for your current library access.</p>
+              <h2 className="section-title">Student Summary</h2>
+              <p className="section-subtitle">Profile information and access status.</p>
+            </div>
+          </div>
+
+          <div className="profile-summary-card">
+            <div className="profile-avatar">
+              {(profile.full_name || profile.email || "S").charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="profile-summary-name">
+                {profile.full_name || "Student User"}
+              </div>
+              <div className="profile-summary-email">{profile.email || "-"}</div>
             </div>
           </div>
 
           <div className="info-grid">
             <div className="info-item">
-              <strong>Profile Name</strong>
-              <span>{profile.full_name || "-"}</span>
-            </div>
-            <div className="info-item">
-              <strong>Email</strong>
-              <span>{profile.email}</span>
-            </div>
-            <div className="info-item">
               <strong>Role</strong>
-              <span>{profile.role}</span>
+              <span>{profile.role || "-"}</span>
             </div>
             <div className="info-item">
               <strong>Status</strong>

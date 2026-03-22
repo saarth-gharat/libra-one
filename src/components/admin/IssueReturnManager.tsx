@@ -23,9 +23,41 @@ type Borrow = {
   book_id: string;
   due_date: string;
   fine_amount: number | null;
-  books?: { title: string; author?: string | null } | null;
-  profiles?: { full_name?: string | null; email?: string | null } | null;
+  books?:
+    | { title?: string | null; author?: string | null }
+    | { title?: string | null; author?: string | null }[]
+    | null;
+  profiles?:
+    | { full_name?: string | null; email?: string | null }
+    | { full_name?: string | null; email?: string | null }[]
+    | null;
 };
+
+function getBookTitle(
+  books:
+    | { title?: string | null; author?: string | null }
+    | { title?: string | null; author?: string | null }[]
+    | null
+    | undefined
+) {
+  if (!books) return "-";
+  if (Array.isArray(books)) return books[0]?.title || "-";
+  return books.title || "-";
+}
+
+function getProfileName(
+  profiles:
+    | { full_name?: string | null; email?: string | null }
+    | { full_name?: string | null; email?: string | null }[]
+    | null
+    | undefined
+) {
+  if (!profiles) return "-";
+  if (Array.isArray(profiles)) {
+    return profiles[0]?.full_name || profiles[0]?.email || "-";
+  }
+  return profiles.full_name || profiles.email || "-";
+}
 
 export default function IssueReturnManager({
   books,
@@ -65,10 +97,8 @@ export default function IssueReturnManager({
       due_date: dueDate,
       status: "borrowed",
       fine_amount: 0,
+      borrow_date: new Date().toISOString().slice(0, 10),
     };
-
-    const today = new Date().toISOString().slice(0, 10);
-    payload.borrow_date = today;
 
     const { error: insertError } = await supabase.from("borrows").insert(payload);
 
@@ -148,14 +178,20 @@ export default function IssueReturnManager({
         <div className="section-head">
           <div>
             <h2 className="section-title">Issue Book</h2>
-            <p className="section-subtitle">Assign a book to a student in a clean, simple form.</p>
+            <p className="section-subtitle">
+              Assign a book to a student in a clean, simple form.
+            </p>
           </div>
         </div>
 
         <form onSubmit={issueBook} className="grid-3">
           <div className="field-group">
             <label>Student</label>
-            <select className="select" value={studentId} onChange={(e) => setStudentId(e.target.value)}>
+            <select
+              className="select"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+            >
               <option value="">Select student</option>
               {students.map((student) => (
                 <option key={student.id} value={student.id}>
@@ -167,7 +203,11 @@ export default function IssueReturnManager({
 
           <div className="field-group">
             <label>Book</label>
-            <select className="select" value={bookId} onChange={(e) => setBookId(e.target.value)}>
+            <select
+              className="select"
+              value={bookId}
+              onChange={(e) => setBookId(e.target.value)}
+            >
               <option value="">Select book</option>
               {availableBooks.map((book) => (
                 <option key={book.id} value={book.id}>
@@ -219,12 +259,16 @@ export default function IssueReturnManager({
               {activeBorrows.length ? (
                 activeBorrows.map((borrow) => (
                   <tr key={borrow.id}>
-                    <td>{borrow.profiles?.full_name || borrow.profiles?.email || "-"}</td>
-                    <td>{borrow.books?.title || "-"}</td>
+                    <td>{getProfileName(borrow.profiles)}</td>
+                    <td>{getBookTitle(borrow.books)}</td>
                     <td>{borrow.due_date}</td>
                     <td>₹{Number(borrow.fine_amount || 0).toFixed(2)}</td>
                     <td>
-                      <button type="button" className="btn btn-secondary" onClick={() => returnBook(borrow)}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => returnBook(borrow)}
+                      >
                         Return
                       </button>
                     </td>

@@ -5,18 +5,20 @@ import { toast } from "sonner";
 import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
 
+type ProfileData = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+  phone?: string | null;
+  avatar_url?: string | null;
+  max_borrow_limit?: number | null;
+};
+
 export default function ProfileEditor({
   profile,
 }: {
-  profile: {
-    id: string;
-    full_name: string | null;
-    email: string;
-    role: string;
-    phone?: string | null;
-    avatar_url?: string | null;
-    max_borrow_limit?: number | null;
-  };
+  profile: ProfileData;
 }) {
   const [fullName, setFullName] = useState(profile.full_name || "");
   const [phone, setPhone] = useState(profile.phone || "");
@@ -63,17 +65,25 @@ export default function ProfileEditor({
         <form onSubmit={saveProfile} style={{ display: "grid", gap: 14 }}>
           <div className="field-group">
             <label>Full Name</label>
-            <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <input
+              className="input"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
           </div>
 
           <div className="field-group">
             <label>Email</label>
-            <input className="input" value={profile.email} readOnly />
+            <input className="input" value={profile.email || ""} readOnly />
           </div>
 
           <div className="field-group">
             <label>Phone Number</label>
-            <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input
+              className="input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
 
           <div className="field-group">
@@ -114,14 +124,14 @@ export default function ProfileEditor({
           )}
           <div>
             <div className="profile-summary-name">{fullName || "User"}</div>
-            <div className="profile-summary-email">{profile.email}</div>
+            <div className="profile-summary-email">{profile.email || "-"}</div>
           </div>
         </div>
 
         <div className="info-grid" style={{ marginTop: 16 }}>
           <div className="info-item">
             <strong>Role</strong>
-            <span>{profile.role}</span>
+            <span>{profile.role || "-"}</span>
           </div>
           <div className="info-item">
             <strong>Phone</strong>
